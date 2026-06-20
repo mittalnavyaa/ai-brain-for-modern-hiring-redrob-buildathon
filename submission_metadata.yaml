@@ -1,0 +1,63 @@
+team_name: "Insomniaks"  
+
+primary_contact:
+  name: "Shaurya Aggarwal"
+  email: "shauryaaggarwalxia@gmail.com"  
+  phone: "+91-9548565672"        
+
+team_members:
+  - name: "Shaurya Aggarwal"
+    email: "shauryaaggarwalxia@gmail.com"
+    role: ""          
+  - name: "Navyaa Mittal"
+    email: "navyaamittal23@gmail.com"
+    role: ""
+
+# ============================================================================
+github_repo: "https://github.com/mittalnavyaa/ai-brain-for-modern-hiring-redrob-buildathon"
+
+sandbox_link: "https://colab.research.google.com/drive/1EO6j8lt_PAIH4l7qv_DhRZH4EmABg47B?usp=sharing"
+# Required. A working hosted environment where the ranker can be run on a small
+# candidate sample. See Section 10.5 of submission_spec.md for acceptable
+# platforms (HuggingFace Spaces, Streamlit Cloud, Replit, Colab, Docker, Binder).
+
+reproduce_command: "python rank.py"
+# The single command that produces submission.csv from candidates.jsonl.
+# Should run end-to-end within 5 minutes on CPU with 16GB RAM and no network.
+
+# ============================================================================
+# Compute environment
+
+compute:
+  platform: "Google Colab Free Tier"                   
+  cpu_cores: 2                                  
+  ram_gb: 12                                    
+  python_version: "3.11.4"                      
+  os: "Ubuntu 22.04 LTS"                              
+  uses_gpu_for_inference: false                 
+  has_network_during_ranking: false             
+  pre_computation_required: true               
+  pre_computation_time_minutes: 60             
+# ============================================================================
+# AI tools declaration
+
+ai_tools_used:
+  - "Gemini"        
+
+ai_usage_summary: |
+  - "Used Gemini for code generation and architectural planning."
+  - "All logic was executed locally."
+
+# ============================================================================
+# Approach summary 
+methodology_summary: |
+  "Hybrid Multi-Stage Funnel. Stage 1 utilizes FAISS semantic retrieval via all-MiniLM-L6-v2. Stage 2 executes deterministic honeypot/trap filtration. Stage 3 applies a custom-trained DistilBERT (ConsultantBERT) to classify product vs IT-service experience, weighted alongside recruiter response rates."
+
+# ============================================================================
+# Declarations
+declarations:
+  read_submission_spec: true        # I have read submission_spec.md in full
+  code_is_original_work: true       # My code is my team's original work (using AI as a tool is fine)
+  no_collusion: true                # I have not coordinated my submission with other teams
+  honeypot_check_done: true        # OPTIONAL — set true if you explicitly checked for honeypots in your ranking
+  reproduction_tested: true         # I have tested that my reproduce_command runs end-to-end
