@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-validate:
-    runs-name: Headless Sandbox Validation Audit
+    name: Headless Sandbox Validation Audit
     runs-on: ubuntu-latest
 
     steps:
