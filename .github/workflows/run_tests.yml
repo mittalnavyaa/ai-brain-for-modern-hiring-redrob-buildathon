@@ -1,0 +1,54 @@
+name: Redrob AI Pipeline Ingestion Validation CI
+
+on:
+  push:
+    branches: [ "main", "feature/hybrid-ranker" ]
+  pull_request:
+    branches: [ "main", "feature/hybrid-ranker" ]
+
+jobs:
+  build-and-validate:
+    runs-name: Headless Sandbox Validation Audit
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Source Code Execution Repository
+      uses: actions/checkout@v3
+
+    - name: Initialize CPython Isolated Running Environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install High-Performance Native Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Generate Automated Test Dataset Mock File
+      run: |
+        python -c "
+        import os, orjson
+        os.makedirs('data', exist_ok=True)
+        mock_dataset = [
+            {
+                'candidate_id': 'REDROB_CANDIDATE_001',
+                'resume_text': 'Senior AI Systems Specialist. Deep vector database engineering expertise in PyTorch, Pinecone, FAISS indexing, custom rankers, and optimizing NDCG.',
+                'current_title': 'AI Systems Engineer',
+                'experiences': [{'start_year': 2022, 'end_year': 2025, 'company_id': 'alpha_prod', 'is_part_time': False}],
+                'behavioral_signals': {'t_elapsed': 5.0, 'response_rate': 0.98, 'completeness': 0.95}
+            }
+        ]
+        with open('data/test_candidates.jsonl', 'wb') as f:
+            for record in mock_dataset:
+                f.write(orjson.dumps(record) + b'\n')
+        "
+
+    - name: Execute Main Core Candidate Screening Pipeline Run
+      run: |
+        python run_pipeline.py
+
+    - name: Execute Structural Monotonic Validation Audit Checks
+      run: |
+        python validate_submission.py
