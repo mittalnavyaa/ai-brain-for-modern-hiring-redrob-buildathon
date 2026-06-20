@@ -1,0 +1,15 @@
+# Redrob AI Hackathon System Configuration Metadata  
+metadata_version: "1.1"  
+system_parameters:  
+  target_job_title: "Senior AI Engineer - Founding Team"  
+  stage_1_candidate_limit: 1000  
+  stage_2_output_limit: 100  
+  evaluation_metric_target: "NDCG@10"  
+model_paths:  
+  sparse_retriever: "data/dictionary_trie.pkl"  
+  dense_embedder: "models/current_title_embedder.onnx"  
+  listwise_ranker: "models/lambdarank_model.txt"  
+hardware_requirements:  
+  maximum_ram_allocation_gb: 16  
+  gpu_access_required: false  
+  network_access_required: false
