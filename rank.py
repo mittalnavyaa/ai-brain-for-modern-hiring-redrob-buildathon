@@ -2,22 +2,37 @@ import json
 import faiss
 import csv
 import torch
+import os
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-work_dir = '.'
+# Resolve the absolute path to the directory where rank.py is located
+# This handles both local Windows environments and the judges' environments dynamically
+base_dir = os.path.dirname(os.path.abspath(__file__))
+work_dir = base_dir
 
 print("1. Loading Pre-computed Artifacts...")
 
-# Load FAISS
-index = faiss.read_index(f"{work_dir}/candidates.index")
-with open(f"{work_dir}/id_mapping.json", "r") as f:
+# Load FAISS Index and Mapping using clean path resolution
+index_path = os.path.join(work_dir, "candidates.index")
+mapping_path = os.path.join(work_dir, "id_mapping.json")
+
+index = faiss.read_index(index_path)
+with open(mapping_path, "r") as f:
     id_mapping = json.load(f)
 
 # Load Models
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
-tokenizer = AutoTokenizer.from_pretrained(f"{work_dir}/final_consultant_bert")
-model = AutoModelForSequenceClassification.from_pretrained(f"{work_dir}/final_consultant_bert")
+
+# Resolve absolute path for your local model folder
+model_absolute_path = os.path.join(work_dir, "final_consultant_bert")
+
+model_absolute_path = model_absolute_path.replace("\\", "/")
+print(f"Targeting local model weights at: {model_absolute_path}")
+
+# Explicitly use local_files_only=True to prevent network lookup bugs
+tokenizer = AutoTokenizer.from_pretrained(model_absolute_path, local_files_only=True)
+model = AutoModelForSequenceClassification.from_pretrained(model_absolute_path, local_files_only=True)
 model.eval() # Set model to evaluation mode
 
 print("2. Retrieving Top 500 Semantic Matches from FAISS...")
@@ -35,12 +50,14 @@ faiss.normalize_L2(jd_embedding)
 # Search FAISS
 distances, indices = index.search(jd_embedding, 500)
 # Map exact FAISS distances to candidate IDs for accurate scoring
-semantic_scores = {id_mapping[idx]: dist for dist, idx in zip(distances[0], indices[0])}
+semantic_scores = {id_mapping[int(idx)]: dist for dist, idx in zip(distances[0], indices[0])}
 top_500_ids = set(semantic_scores.keys())
 
 print("3. Extracting Full Profiles for Top 500...")
 candidates_data = []
-with open(f"{work_dir}/candidates.jsonl", "rt", encoding="utf-8") as f:
+candidates_path = os.path.join(work_dir, "candidates.jsonl")
+
+with open(candidates_path, "rt", encoding="utf-8") as f:
     for line in f:
         cand = json.loads(line)
         if cand['candidate_id'] in top_500_ids:
@@ -74,13 +91,10 @@ for cand in candidates_data:
         product_score = probs[0][1].item() # Probability of being Label 1 (Product Engineer)
 
     # --- C. BEHAVIORAL SIGNALS ---
-    # In the real world, inactive/non-responsive candidates are useless.
     response_rate = signals.get('recruiter_response_rate', 0.5)
 
     # --- D. FINAL COMPOSITE SCORE ---
-    # 40% Semantic Match, 40% Product-Domain Fit, 20% Recruiter Response
     semantic_score = semantic_scores.get(cid, 0.5)
-
     composite_score = (semantic_score * 0.4) + (product_score * 0.4) + (response_rate * 0.2)
 
     # --- E. GENERATE DYNAMIC REASONING ---
@@ -102,7 +116,7 @@ top_100 = final_rankings[:100]
 
 # Write to CSV!
 TEAM_ID = "team_insomniaks"
-csv_path = f"{work_dir}/{TEAM_ID}.csv"
+csv_path = os.path.join(work_dir, f"{TEAM_ID}.csv")
 
 with open(csv_path, "w", newline='', encoding="utf-8") as f:
     writer = csv.writer(f)
