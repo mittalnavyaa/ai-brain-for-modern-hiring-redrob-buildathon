@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Full Candidate Dataset | Deterministic Leaderboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@700;800&amp;family=Hanken+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#00685f",
+                    "surface-bright": "#f7f9fb",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#6bd8cb",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#bec6e0",
+                    "tertiary-fixed": "#d8e2ff",
+                    "surface-container-high": "#e6e8ea",
+                    "on-background": "#191c1e",
+                    "surface-variant": "#e0e3e5",
+                    "on-primary-fixed": "#00201d",
+                    "surface": "#f7f9fb",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#f4fffc",
+                    "inverse-surface": "#2d3133",
+                    "on-secondary-container": "#5c647a",
+                    "background": "#f7f9fb",
+                    "secondary": "#565e74",
+                    "surface-dim": "#d8dadc",
+                    "on-tertiary-fixed-variant": "#004395",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#6bd8cb",
+                    "secondary-container": "#dae2fd",
+                    "surface-container-highest": "#e0e3e5",
+                    "outline": "#6d7a77",
+                    "on-tertiary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "inverse-on-surface": "#eff1f3",
+                    "error": "#ba1a1a",
+                    "surface-container": "#eceef0",
+                    "on-secondary-fixed": "#131b2e",
+                    "on-primary-fixed-variant": "#005049",
+                    "tertiary-container": "#2170e4",
+                    "secondary-fixed": "#dae2fd",
+                    "outline-variant": "#bcc9c6",
+                    "on-error-container": "#93000a",
+                    "on-surface": "#191c1e",
+                    "on-surface-variant": "#3d4947",
+                    "tertiary": "#0058be",
+                    "primary-container": "#008378",
+                    "surface-container-low": "#f2f4f6",
+                    "on-tertiary-fixed": "#001a42",
+                    "on-tertiary-container": "#fefcff",
+                    "tertiary-fixed-dim": "#adc6ff",
+                    "surface-tint": "#006a61",
+                    "primary-fixed": "#89f5e7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "margin-tablet": "32px",
+                    "gutter": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Manrope"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Manrope"],
+                    "label-bold": ["Hanken Grotesk"],
+                    "headline-xl": ["Manrope"],
+                    "label-md": ["Hanken Grotesk"],
+                    "body-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #F8FAFC; color: #191c1e; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+        .data-row:hover { background-color: rgba(0, 104, 95, 0.02); transition: background-color 0.15s ease; }
+    </style>
+</head>
+<body class="font-body-md text-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<nav class="sticky top-0 z-50 border-b border-outline-variant/60 bg-background/90 backdrop-blur">
+  <div class="mx-auto flex max-w-container-max items-center justify-between px-margin-mobile py-4 md:px-margin-desktop">
+    <a href="/" class="font-headline-lg text-headline-lg-mobile text-primary">PrecisionTalent</a>
+    <div class="flex gap-3 text-sm font-medium text-on-surface-variant">
+      <a href="/" class="hover:text-primary">1. Landing</a>
+      <a href="/second.html" class="hover:text-primary">2. Inference</a>
+      <a href="/Dashboard.html" class="hover:text-primary">3. Leaderboard</a>
+      <a href="/Dataset.html" class="hover:text-primary">4. Dataset</a>
+    </div>
+  </div>
+</nav>
+<!-- Header Section -->
+<header class="bg-surface-container-lowest border-b border-outline-variant px-margin-desktop py-8 sticky top-0 z-50">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-2">
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Full Candidate Dataset</h1>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary rounded-full font-label-bold text-label-bold border border-primary/20">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                        No Hallucinations Guarantee
+                    </span>
+</div>
+<p class="text-on-surface-variant font-body-md opacity-80">1,024 Verified Semantic Matches • Last Updated: Today, 08:45 AM</p>
+</div>
+<div class="flex items-center gap-3">
+<a href="/Dashboard.html" class="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-outline-variant text-on-surface hover:bg-surface-container transition-all font-label-bold group">
+<span class="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+                    Back to Leaderboard
+                </a>
+<button class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container shadow-sm hover:shadow active:scale-95 transition-all font-label-bold">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                    Export Verified Dataset
+                </button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-desktop py-10">
+<!-- Dashboard Sub-Header / Filters -->
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline">search</span>
+<input class="pl-10 pr-4 py-2 border border-outline-variant rounded-lg bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all w-72 text-sm" placeholder="Search by Candidate ID or Role..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-outline-variant rounded-lg text-on-surface hover:bg-surface-container transition-all text-sm font-medium">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                    Score Threshold
+                </button>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant text-sm bg-surface-container-low px-3 py-1.5 rounded-lg">
+<span class="font-semibold text-primary">Weights:</span>
+<span>Semantic 50%</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Fit 20%</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Exp 20%</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Behav 10%</span>
+</div>
+</div>
+<!-- High-Density Data Table -->
+<div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-bright border-b border-outline-variant">
+<th class="px-6 py-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider w-16">Rank</th>
+<th class="px-6 py-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider">Candidate ID</th>
+<th class="px-6 py-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider">Name / Role</th>
+<th class="px-6 py-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider text-right">Semantic (50%)</th>
+<th class="px-6 py-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider text-right">Fit (20%)</th>
+<th class="px-6 py-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider text-right">Exp (20%)</th>
+<th class="px-6 py-4 font-label-bold text-label-bold text-on-surface-variant uppercase tracking-wider text-right">Behav (10%)</th>
+<th class="px-6 py-4 font-label-bold text-label-bold text-primary uppercase tracking-wider text-right bg-primary/5">Final Composite</th>
+</tr>
+</thead>
+<tbody id="dataset-body" class="divide-y divide-outline-variant">
+<tr><td colspan="8" class="px-6 py-8 text-center text-on-surface-variant">Loading dataset…</td></tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="px-6 py-4 bg-surface-bright border-t border-outline-variant flex items-center justify-between">
+<div class="text-sm text-on-surface-variant font-medium">
+                    Showing <span class="text-on-surface">1-50</span> of <span class="text-on-surface">1,024</span> matches
+                </div>
+<div class="flex items-center gap-1">
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-[20px]">first_page</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<div class="flex items-center gap-1 px-4">
+<span class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary text-xs font-bold shadow-sm">1</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high text-xs font-medium transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high text-xs font-medium transition-colors">3</button>
+<span class="px-1 text-on-surface-variant opacity-50">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high text-xs font-medium transition-colors">21</button>
+</div>
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">last_page</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-sm text-on-surface-variant">Rows per page</span>
+<select class="bg-white border border-outline-variant rounded px-2 py-1 text-sm outline-none focus:border-primary">
+<option>50</option>
+<option>100</option>
+<option>250</option>
+</select>
+</div>
+</div>
+</div>
+<!-- System Status Bar -->
+<div class="mt-8 flex items-center justify-between p-4 bg-inverse-surface rounded-lg text-white">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary-fixed-dim animate-pulse"></div>
+<span class="text-xs font-label-bold uppercase tracking-widest opacity-80">Real-time Sync Active</span>
+</div>
+<div class="h-4 w-[1px] bg-white/20"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed-dim">shield_lock</span>
+<span class="text-xs font-label-bold">Deterministic Verification Layer 4.0</span>
+</div>
+</div>
+<div class="text-[11px] font-mono opacity-50">
+                HASH_REF: 0x98f...2e11 | LATENCY: 14ms
+            </div>
+</div>
+</main>
+<!-- Floating Micro-Interaction Tooltip (Logic only) -->
+<div class="fixed pointer-events-none bg-inverse-surface text-white text-[11px] px-2 py-1 rounded opacity-0 transition-opacity z-[60]" id="tooltip"></div>
+<script>
+        async function loadDataset() {
+            const body = document.getElementById('dataset-body');
+            const searchInput = document.querySelector('input[type="text"]');
+            try {
+                const response = await fetch('/api/dataset?limit=50');
+                const data = await response.json();
+                const rows = data.results || [];
+                const renderRows = (items) => items.map(candidate => `
+                    <tr class="data-row cursor-default">
+                        <td class="px-6 py-4 font-headline-lg text-[14px] text-on-surface-variant">#${candidate.rank}</td>
+                        <td class="px-6 py-4 font-mono text-[13px] text-on-surface-variant/70">${candidate.candidate_id}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col">
+                                <span class="font-headline-lg text-[15px] text-on-surface">${candidate.name}</span>
+                                <span class="text-body-sm text-on-surface-variant opacity-70">${candidate.role}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right font-medium text-on-surface-variant">${candidate.semantic_score.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-right font-medium text-on-surface-variant">${candidate.fit_score.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-right font-medium text-on-surface-variant">${candidate.experience_score.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-right font-medium text-on-surface-variant">${candidate.behavior_score.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-right bg-primary/5">
+                            <span class="font-headline-lg text-[16px] text-primary">${candidate.composite_score.toFixed(2)}</span>
+                        </td>
+                    </tr>
+                `).join('');
+                body.innerHTML = renderRows(rows);
+                searchInput.addEventListener('input', (e) => {
+                    const val = e.target.value.toLowerCase();
+                    document.querySelectorAll('.data-row').forEach(row => {
+                        const text = row.innerText.toLowerCase();
+                        row.style.display = text.includes(val) ? '' : 'none';
+                    });
+                });
+            } catch (error) {
+                body.innerHTML = '<tr><td colspan="8" class="px-6 py-8 text-center text-on-surface-variant">Unable to load dataset.</td></tr>';
+            }
+        }
+
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('scale-95'));
+        });
+
+        loadDataset();
+    </script>
+</body></html>
