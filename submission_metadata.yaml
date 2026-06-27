@@ -16,16 +16,11 @@ team_members:
 # ============================================================================
 github_repo: "https://github.com/mittalnavyaa/ai-brain-for-modern-hiring-redrob-buildathon"
 
-sandbox_link: "https://colab.research.google.com/drive/1EO6j8lt_PAIH4l7qv_DhRZH4EmABg47B?usp=sharing"
-# Required. A working hosted environment where the ranker can be run on a small
-# candidate sample. See Section 10.5 of submission_spec.md for acceptable
-# platforms (HuggingFace Spaces, Streamlit Cloud, Replit, Colab, Docker, Binder).
+sandbox_link: "https://huggingface.co/spaces/shaurya57/ai-brain-modern-hiring"
 
 reproduce_command: "python rank.py"
-# The single command that produces submission.csv from candidates.jsonl.
-# Should run end-to-end within 5 minutes on CPU with 16GB RAM and no network.
-
 # ============================================================================
+
 # Compute environment
 
 compute:
@@ -45,7 +40,7 @@ ai_tools_used:
   - "Gemini"        
 
 ai_usage_summary: |
-  - "Used Gemini for code generation and architectural planning."
+  - "Used Gemini for code completion and architectural planning."
   - "All logic was executed locally."
 
 # ============================================================================
