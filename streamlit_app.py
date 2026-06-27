@@ -433,10 +433,9 @@ if page == "🏠 Overview":
     st.markdown("### 👥 Team Insomniaks")
     t1, t2 = st.columns(2)
     with t1:
-        st.markdown("**Shaurya Aggarwal** — ML Pipeline & Backend")
+        st.markdown("**Shaurya Aggarwal** ")
     with t2:
-        st.markdown("**Navyaa Mittal** — Frontend & Design")
-
+        st.markdown("**Navyaa Mittal** ")
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  PAGE: RANKING SANDBOX
