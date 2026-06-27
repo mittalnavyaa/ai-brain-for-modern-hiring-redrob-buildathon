@@ -1,3 +1,15 @@
+---
+title: AI Brain for Modern Hiring
+emoji: 🧠
+colorFrom: green
+colorTo: purple
+sdk: streamlit
+sdk_version: "1.45.0"
+app_file: streamlit_app.py
+pinned: false
+license: mit
+---
+
 # Redrob Candidate Ranking - Team Insomniaks
 
 ## Overview

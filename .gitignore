@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.env
+.DS_Store
+
+# Heavy ML Assets (Keep out of GitHub to avoid the 100MB file limit)
+candidates.index
+candidates.jsonl
+id_mapping.json
+final_consultant_bert/
+
+# Generated Output files
+*.csv
+team_insomniaks.csv
