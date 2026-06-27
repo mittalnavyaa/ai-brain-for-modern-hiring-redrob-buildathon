@@ -4,7 +4,7 @@
 
 This repository contains Team **Insomniaks'** submission for the **Redrob Hackathon**. Our solution implements a **Hybrid Multi-Stage Candidate Ranking Funnel** designed to efficiently process over **100,000 candidate profiles** and return the **Top 100 most relevant candidates** in **under 5 minutes** on a standard CPU-only machine with limited memory.
 
-The system combines semantic retrieval, deterministic validation, domain-specific classification, and composite ranking to achieve high accuracy while remaining computationally efficient and robust against adversarial or misleading candidate profiles.
+The system combines semantic retrieval, domain-specific classification, and composite ranking to achieve high accuracy while remaining computationally efficient and robust.
 
 ---
 
@@ -20,22 +20,7 @@ Instead of evaluating all 100,000 candidates, the system instantly retrieves the
 
 ---
 
-### 2. Honeypot and Inconsistency Filtration
-
-The shortlisted candidates are passed through a deterministic rule-based filtration layer designed to eliminate suspicious or logically inconsistent profiles.
-
-Examples include:
-
-* Candidates claiming expert proficiency with zero practical experience.
-* Impossible career timelines.
-* Skill inflation and keyword stuffing.
-* Contradictory experience histories.
-
-This stage improves the robustness of the ranking pipeline and prevents adversarial profiles from appearing in the final shortlist.
-
----
-
-### 3. Domain Classification using ConsultantBERT
+### 2. Domain Classification using ConsultantBERT
 
 The remaining candidates are evaluated using **ConsultantBERT**, our custom fine-tuned transformer model built on a distilled BERT architecture.
 
@@ -48,14 +33,14 @@ This enables the ranking engine to prioritize candidates whose professional traj
 
 ---
 
-### 4. Composite Signal Weighting
+### 3. Composite Signal Weighting
 
 Finally, a weighted scoring mechanism combines:
 
-* Semantic similarity score
-* Product-domain probability from ConsultantBERT
-* Recruiter response probability
-* Additional deterministic signals
+* Semantic similarity score (40%)
+* Product-domain probability from ConsultantBERT (30%)
+* Experience Signal (20%)
+* Behavioral Signal (Recruiter response probability) (10%)
 
 The combined score is used to generate the final **Top 100 ranked candidates**, along with concise reasoning explaining the ranking.
 

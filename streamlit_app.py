@@ -4,7 +4,7 @@ AI Brain for Modern Hiring — Sandbox Demo
 Team Insomniaks | Redrob Hackathon
 
 Full end-to-end ranking pipeline:
-  FAISS Semantic Retrieval → Honeypot Filtration → ConsultantBERT Classification → Composite Scoring
+  FAISS Semantic Retrieval → ConsultantBERT Classification → Composite Scoring
 """
 
 import streamlit as st
@@ -230,39 +230,17 @@ def run_pipeline(jd_text, candidates, embedder, tokenizer, bert_model, progress)
     lookup = {c["candidate_id"]: c for c in candidates}
     shortlist = [lookup[cid] for cid in sem_scores if cid in lookup]
 
-    # ── Stage 3: Honeypot filtration ──
-    progress.progress(0.50, text="🍯  Stage 3/5 — Filtering honeypot / adversarial candidates …")
-    clean, traps = [], 0
-    for cand in shortlist:
-        flagged = False
-        for sk in cand.get("skills", []):
-            if isinstance(sk, dict):
-                if (
-                    sk.get("proficiency") in ("advanced", "expert")
-                    and sk.get("duration_months", 1) == 0
-                ):
-                    flagged = True
-                    break
-        if flagged:
-            traps += 1
-        else:
-            clean.append(cand)
-
-    stats["honeypots"] = traps
-    stats["after_filter"] = len(clean)
-    stages["3_honeypot"] = f"Removed {traps} honeypot candidates → {len(clean)} remaining"
-
-    # ── Stage 4: ConsultantBERT classification ──
-    progress.progress(0.65, text="🤖  Stage 4/5 — Running ConsultantBERT on each candidate …")
+    # ── Stage 3: ConsultantBERT classification ──
+    progress.progress(0.65, text="🤖  Stage 3/4 — Running ConsultantBERT on each candidate …")
     rankings = []
-    total = len(clean)
-    for ci, cand in enumerate(clean):
+    total = len(shortlist)
+    for ci, cand in enumerate(shortlist):
         # Update sub-progress every 10 candidates
         if ci % 10 == 0:
             frac = 0.65 + 0.25 * (ci / max(total, 1))
             progress.progress(
                 min(frac, 0.90),
-                text=f"🤖  Stage 4/5 — ConsultantBERT inference … ({ci}/{total})",
+                text=f"🤖  Stage 3/4 — ConsultantBERT inference … ({ci}/{total})",
             )
 
         cid = cand["candidate_id"]
@@ -278,15 +256,16 @@ def run_pipeline(jd_text, candidates, embedder, tokenizer, bert_model, progress)
 
         resp_rate = signals.get("recruiter_response_rate", 0.5)
         sem = sem_scores.get(cid, 0.5)
-
-        # Composite (matching rank.py weights: 0.4 semantic + 0.4 BERT + 0.2 behavioral)
-        composite = (sem * 0.4) + (product_score * 0.4) + (resp_rate * 0.2)
-
         exp_yrs = profile.get("years_of_experience", 0)
+        exp_score = min(exp_yrs / 7.0, 1.0)
+
+        # Composite (matching rank.py weights: 0.40 semantic + 0.30 BERT + 0.20 experience + 0.10 behavioral)
+        composite = (sem * 0.40) + (product_score * 0.30) + (exp_score * 0.20) + (resp_rate * 0.10)
+
         reasoning = (
             f"Matched with {exp_yrs} yrs exp. "
-            f"Product-fit probability {product_score:.0%}. "
-            f"Behavioral response rate {resp_rate:.0%}."
+            f"Product-fit prob {product_score:.2f}. "
+            f"Response rate {resp_rate:.2f}."
         )
 
         name = (
@@ -319,16 +298,16 @@ def run_pipeline(jd_text, candidates, embedder, tokenizer, bert_model, progress)
             }
         )
 
-    stages["4_bert"] = f"Classified {len(rankings)} candidates via ConsultantBERT"
+    stages["3_bert"] = f"Classified {len(rankings)} candidates via ConsultantBERT"
 
-    # ── Stage 5: Sort & rank ──
-    progress.progress(0.95, text="📊  Stage 5/5 — Computing composite scores & final ranking …")
+    # ── Stage 4: Sort & rank ──
+    progress.progress(0.95, text="📊  Stage 4/4 — Computing composite scores & final ranking …")
     rankings.sort(key=lambda x: (-x["score"], x["candidate_id"]))
     for i, r in enumerate(rankings, 1):
         r["rank"] = i
 
     stats["final_ranked"] = len(rankings)
-    stages["5_rank"] = f"Final ranking: {len(rankings)} candidates sorted by composite score"
+    stages["4_rank"] = f"Final ranking: {len(rankings)} candidates sorted by composite score"
 
     progress.progress(1.0, text="✅  Pipeline complete!")
     return {"rankings": rankings, "stages": stages, "stats": stats}
@@ -420,7 +399,7 @@ if page == "🏠 Overview":
         )
     with c3:
         st.markdown(
-            '<div class="stat-card"><div class="num">5</div>'
+            '<div class="stat-card"><div class="num">4</div>'
             '<div class="lbl">Pipeline Stages</div></div>',
             unsafe_allow_html=True,
         )
@@ -436,9 +415,8 @@ if page == "🏠 Overview":
     st.markdown("### 🔬 Pipeline Stages")
     steps = [
         ("🔍", "FAISS Semantic Retrieval", "Encode JD with MiniLM-L6-v2, search pre-indexed candidate embeddings"),
-        ("🍯", "Honeypot & Trap Filtration", "Drop candidates with inflated proficiency but zero experience duration"),
         ("🤖", "ConsultantBERT Classification", "Fine-tuned DistilBERT distinguishes product engineers from consultants"),
-        ("📊", "Composite Signal Weighting", "0.4×semantic + 0.4×BERT-fit + 0.2×behavioral response rate"),
+        ("📊", "Composite Signal Weighting", "0.40×semantic + 0.30×BERT + 0.20×experience + 0.10×behavioral"),
         ("🏆", "Final Ranking & CSV Export", "Sort by composite score, break ties by candidate ID, export top-N"),
     ]
     for icon, title, desc in steps:
@@ -552,12 +530,11 @@ elif page == "🧪 Ranking Sandbox":
 
         # ── Stats row ──
         st.markdown("### 📈 Execution Summary")
-        s1, s2, s3, s4, s5 = st.columns(5)
+        s1, s2, s3, s4 = st.columns(4)
         s1.metric("Total Input", result["stats"]["total_candidates"])
         s2.metric("FAISS Hits", result["stats"]["faiss_retrieved"])
-        s3.metric("Honeypots ❌", result["stats"]["honeypots"])
-        s4.metric("Final Ranked", result["stats"]["final_ranked"])
-        s5.metric("Time", f"{elapsed:.1f}s")
+        s3.metric("Final Ranked", result["stats"]["final_ranked"])
+        s4.metric("Time", f"{elapsed:.1f}s")
 
         # Stage log
         with st.expander("📋 Pipeline Stage Log", expanded=False):
@@ -723,15 +700,7 @@ elif page == "🏗️ Architecture":
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  Stage 2: Honeypot & Adversarial Filtration                         │
-│  ├─ Flag: "Expert" proficiency + 0 months duration                 │
-│  ├─ Flag: Impossible career timelines                              │
-│  └─ Drop all flagged candidates                                     │
-└──────────────────────────────┬──────────────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│  Stage 3: ConsultantBERT Classification                             │
+│  Stage 2: ConsultantBERT Classification                             │
 │  ├─ Custom fine-tuned DistilBERT (2 classes)                       │
 │  ├─ Input: headline + summary (truncated to 512 tokens)            │
 │  └─ Output: P(Product Engineer) probability                        │
@@ -739,13 +708,13 @@ elif page == "🏗️ Architecture":
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  Stage 4: Composite Score                                           │
-│  score = 0.4 × semantic + 0.4 × BERT_fit + 0.2 × response_rate    │
+│  Stage 3: Composite Score                                           │
+│  score = 0.40 × semantic + 0.30 × BERT + 0.20 × exp + 0.10 × beh  │
 └──────────────────────────────┬──────────────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  Stage 5: Sort & Export                                             │
+│  Stage 4: Sort & Export                                             │
 │  ├─ Sort descending by composite score                             │
 │  ├─ Tie-break by candidate_id ascending                            │
 │  └─ Export top-100 → team_insomniaks.csv                           │
@@ -781,22 +750,28 @@ to ensure zero network dependency during inference.
     st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
 
     st.markdown("### ⚖️ Scoring Weights")
-    w1, w2, w3 = st.columns(3)
+    w1, w2, w3, w4 = st.columns(4)
     with w1:
         st.markdown(
-            '<div class="stat-card"><div class="num">0.4</div>'
+            '<div class="stat-card"><div class="num">0.40</div>'
             '<div class="lbl">Semantic Similarity</div></div>',
             unsafe_allow_html=True,
         )
     with w2:
         st.markdown(
-            '<div class="stat-card"><div class="num">0.4</div>'
+            '<div class="stat-card"><div class="num">0.30</div>'
             '<div class="lbl">BERT Product-Fit</div></div>',
             unsafe_allow_html=True,
         )
     with w3:
         st.markdown(
-            '<div class="stat-card"><div class="num">0.2</div>'
+            '<div class="stat-card"><div class="num">0.20</div>'
+            '<div class="lbl">Experience Signal</div></div>',
+            unsafe_allow_html=True,
+        )
+    with w4:
+        st.markdown(
+            '<div class="stat-card"><div class="num">0.10</div>'
             '<div class="lbl">Behavioral Signal</div></div>',
             unsafe_allow_html=True,
         )
